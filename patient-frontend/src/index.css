@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    /* Brand system - Calming, high-contrast Teal/Green optimized for Dementia */
+    --brand: 160 60% 35%; /* Deep teal green */
+    --brand-foreground: 0 0% 100%;
+
+    --primary: 160 60% 35%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 155 30% 92%; /* Soft mint */
+    --secondary-foreground: 160 50% 20%;
+
+    --muted: 150 20% 96%;
+    --muted-foreground: 160 15% 40%;
+
+    --accent: 35 85% 50%; /* Warm amber for friendly alerts/contrast */
+    --accent-foreground: 0 0% 100%;
+
+    --info: 190 80% 40%;
+    --info-foreground: 0 0% 100%;
+
+    --success: 142 70% 35%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 40 90% 50%;
+    --warning-foreground: 0 0% 10%;
+
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 160 20% 85%;
+    --input: 160 20% 85%;
+    --ring: 160 60% 35%;
+
+    --radius: 1rem; /* Softer, larger rounded corners for a friendlier look */
+
+    --sidebar-background: 150 20% 98%;
+    --sidebar-foreground: 160 50% 20%;
+    --sidebar-primary: 160 60% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 155 30% 92%;
+    --sidebar-accent-foreground: 160 50% 20%;
+    --sidebar-border: 160 20% 85%;
+    --sidebar-ring: 160 60% 35%;
+  }
+
+  .dark {
+    --background: 160 20% 8%; /* Very dark green-tinted background */
+    --foreground: 150 20% 95%;
+
+    --card: 160 20% 12%;
+    --card-foreground: 150 20% 95%;
+
+    --popover: 160 20% 12%;
+    --popover-foreground: 150 20% 95%;
+
+    --brand: 160 60% 45%;
+    --brand-foreground: 0 0% 100%;
+
+    --primary: 160 55% 45%; /* Slightly brighter green for dark mode visibility */
+    --primary-foreground: 0 0% 10%;
+
+    --secondary: 160 30% 20%;
+    --secondary-foreground: 150 20% 95%;
+
+    --muted: 160 20% 20%;
+    --muted-foreground: 160 15% 70%;
+
+    --accent: 35 85% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --info: 190 80% 55%;
+    --info-foreground: 0 0% 10%;
+
+    --success: 142 60% 45%;
+    --success-foreground: 0 0% 10%;
+
+    --warning: 40 90% 55%;
+    --warning-foreground: 0 0% 10%;
+
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 160 30% 20%;
+    --input: 160 30% 20%;
+    --ring: 160 55% 45%;
+    --sidebar-background: 160 20% 10%;
+    --sidebar-foreground: 150 20% 95%;
+    --sidebar-primary: 160 55% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 160 30% 20%;
+    --sidebar-accent-foreground: 150 20% 95%;
+    --sidebar-border: 160 30% 20%;
+    --sidebar-ring: 160 55% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .hover-scale { @apply transition-transform duration-200 hover:scale-105; }
+  .story-link { @apply relative inline-block; }
+  .story-link::after { content: ""; position: absolute; width: 100%; transform: scaleX(0); height: 2px; bottom: 0; left: 0; background: hsl(var(--primary)); transform-origin: bottom right; transition: transform 0.3s ease; }
+  .story-link:hover::after { transform: scaleX(1); transform-origin: bottom left; }
+}
