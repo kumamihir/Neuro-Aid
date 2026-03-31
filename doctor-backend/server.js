@@ -13,6 +13,7 @@ app.use(cors({
     "http://localhost:8090",           // local dev
     "https://neuro-desk-portal.vercel.app", // deployed doctor frontend
     "https://patient-frontend.vercel.app",  // deployed patient frontend
+    "https://neuro-aid-patient.vercel.app",  // new patient frontend
   ],
   credentials: true,
 }));
