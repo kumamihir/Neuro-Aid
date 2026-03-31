@@ -11,7 +11,8 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:8090",           // local dev
-    "https://neuro-desk-portal.vercel.app" // deployed frontend
+    "https://neuro-desk-portal.vercel.app", // deployed doctor frontend
+    "https://patient-frontend.vercel.app",  // deployed patient frontend
   ],
   credentials: true,
 }));
