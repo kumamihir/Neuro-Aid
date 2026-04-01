@@ -30,15 +30,7 @@ try {
 
 // Dynamic CORS — accept all vercel.app subdomains + localhost
 const allowedOrigin = (origin, cb) => {
-  if (!origin) return cb(null, true);
-  const isAllowed = 
-    origin.includes("surge.sh") || 
-    origin.includes("vercel.app") || 
-    origin.includes("localhost") ||
-    origin.includes("127.0.0.1");
-    
-  if (isAllowed) return cb(null, true);
-  cb(null, false);
+  cb(null, true);
 };
 
 const httpServer = createServer(app);
