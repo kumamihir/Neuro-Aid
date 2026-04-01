@@ -200,7 +200,7 @@ const authMiddleware = (roles = []) => {
 
 /* ROUTES */
 
-app.get("/health", (_req, res) => res.json({ ok: true }));
+app.get("/health", (_req, res) => res.json({ ok: true, version: "cors-fix-v100" }));
 
 /* AUTH */
 app.post("/signup", async (req, res) => {
