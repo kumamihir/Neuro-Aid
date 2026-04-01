@@ -28,35 +28,25 @@ try {
   console.warn("⚠ Twilio init failed:", err.message);
 }
 
+// Dynamic CORS — accept all vercel.app subdomains + localhost
+const allowedOrigin = (origin, cb) => {
+  if (!origin) return cb(null, true);
+  if (
+    origin.endsWith(".vercel.app") ||
+    origin.endsWith(".surge.sh") ||
+    origin.startsWith("http://localhost")
+  )
+    return cb(null, true);
+  cb(null, false);
+};
+
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-  cors: {
-    origin: [
-      "http://localhost:8080",
-      "http://localhost:8090",
-      "https://patient-frontend-txxi.vercel.app",
-      "https://patient-frontend.vercel.app",
-      "https://neuro-aid-patient.vercel.app",
-      "https://neuro-desk-portal.vercel.app",
-    ],
-    credentials: true,
-  },
+  cors: { origin: allowedOrigin, credentials: true },
 });
 
 app.use(express.json());
-app.use(
-  cors({
-    origin: [
-      "http://localhost:8080",
-      "http://localhost:8090",
-      "https://patient-frontend-txxi.vercel.app",
-      "https://patient-frontend.vercel.app",
-      "https://neuro-aid-patient.vercel.app",
-      "https://neuro-desk-portal.vercel.app",
-    ],
-    credentials: true,
-  })
-);
+app.use(cors({ origin: allowedOrigin, credentials: true }));
 
 mongoose
   .connect(MONGO_URI, {

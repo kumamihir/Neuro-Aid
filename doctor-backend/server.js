@@ -8,15 +8,19 @@ import dotenv from "dotenv";
 dotenv.config();
 const app = express();
 
-app.use(cors({
-  origin: [
-    "http://localhost:8090",           // local dev
-    "https://neuro-desk-portal.vercel.app", // deployed doctor frontend
-    "https://patient-frontend.vercel.app",  // deployed patient frontend
-    "https://neuro-aid-patient.vercel.app",  // new patient frontend
-  ],
-  credentials: true,
-}));
+// Dynamic CORS — accept all vercel.app subdomains + localhost
+const allowedOrigin = (origin, cb) => {
+  if (!origin) return cb(null, true);
+  if (
+    origin.endsWith(".vercel.app") ||
+    origin.endsWith(".surge.sh") ||
+    origin.startsWith("http://localhost")
+  )
+    return cb(null, true);
+  cb(null, false);
+};
+
+app.use(cors({ origin: allowedOrigin, credentials: true }));
 
 app.use(express.json());
 
@@ -59,6 +63,7 @@ const appointmentSchema = new mongoose.Schema({
 const Appointment = mongoose.model("Appointment", appointmentSchema);
 
 // ----------------- ROUTES -----------------
+app.get("/health", (_req, res) => res.json({ ok: true }));
 
 // Doctor login
 app.post("/login", async (req, res) => {
