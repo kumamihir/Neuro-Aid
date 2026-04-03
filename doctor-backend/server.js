@@ -21,7 +21,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "super_secret_key";
 
 // ----------------- DATABASE -----------------
 mongoose
-  .connect(process.env.MONGODB_URI)
+  .connect(process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/elderEase")
   .then(() => console.log("✅ Doctor DB connected"))
   .catch((err) => console.error("❌ MongoDB error:", err));
 
@@ -47,12 +47,14 @@ const patientSchema = new mongoose.Schema({
 const Patient = mongoose.model("Patient", patientSchema);
 
 const appointmentSchema = new mongoose.Schema({
-  doctor: { type: mongoose.Schema.Types.ObjectId, ref: "Doctor" },
-  patientName: String,
-  dateTime: Date, // store full datetime
-  reason: String,
-  status: { type: String, default: "scheduled" },
-});
+  patientId: { type: mongoose.Schema.Types.ObjectId, ref: "Patient" },
+  patientName: { type: String, required: true },
+  doctor: { type: String, default: "Unassigned" },
+  date: { type: String, required: true },
+  time: { type: String, required: true },
+  reason: { type: String, default: "" },
+  status: { type: String, enum: ["pending", "confirmed", "completed", "cancelled"], default: "pending" },
+}, { collection: "appointments", timestamps: true });
 const Appointment = mongoose.model("Appointment", appointmentSchema);
 
 // ----------------- ROUTES -----------------
@@ -105,15 +107,12 @@ app.post("/appointments", async (req, res) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    // Combine date + time
-    const [hour, minute] = time.split(":").map(Number);
-    const dateTime = new Date(date);
-    dateTime.setHours(hour, minute, 0, 0);
-
+    // Use date + time correctly matching patient-backend
     const appointment = new Appointment({
       doctor: doctorId,
       patientName,
-      dateTime,
+      date,
+      time,
       reason,
     });
 
@@ -134,14 +133,10 @@ app.get("/appointments", async (_req, res) => {
 // Today's appointments
 app.get("/appointments/today", async (_req, res) => {
   try {
-    const start = new Date();
-    start.setHours(0, 0, 0, 0);
-
-    const end = new Date();
-    end.setHours(23, 59, 59, 999);
+    const today = new Date().toISOString().split("T")[0];
 
     const todayAppointments = await Appointment.find({
-      dateTime: { $gte: start, $lte: end },
+      date: today,
     }).populate("doctor", "name email");
 
     res.json({ status: "ok", appointments: todayAppointments });
@@ -154,11 +149,11 @@ app.get("/appointments/today", async (_req, res) => {
 // Upcoming appointments (future only)
 app.get("/appointments/upcoming", async (_req, res) => {
   try {
-    const now = new Date();
+    const today = new Date().toISOString().split("T")[0];
     const upcomingAppointments = await Appointment.find({
-      dateTime: { $gt: now },
+      date: { $gte: today },
     })
-      .sort({ dateTime: 1 })
+      .sort({ date: 1, time: 1 })
       .limit(10)
       .populate("doctor", "name email");
 
@@ -177,10 +172,8 @@ app.put("/appointments/:id", async (req, res) => {
 
     let update = { status, reason };
     if (date && time) {
-      const [hour, minute] = time.split(":").map(Number);
-      const dateTime = new Date(date);
-      dateTime.setHours(hour, minute, 0, 0);
-      update.dateTime = dateTime;
+      update.date = date;
+      update.time = time;
     }
 
     const appointment = await Appointment.findByIdAndUpdate(
